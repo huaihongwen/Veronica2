@@ -13,6 +13,7 @@
 
 #include <vector>
 
+
 namespace vee {
 
 	// Simple render system

@@ -2,6 +2,7 @@
 #include "veRenderSystem.h"
 #include "veGLSLManager.h"
 #include "veTGALoader.h"
+#include "veMesh.h"
 
 
 namespace vee {

@@ -8,8 +8,10 @@
 #include "vePrerequisites.h"
 #include "veMath.h"
 #include "veUIComponent.h"
-#include "veRenderer.h"
 #include "veRenderSystem.h"
+#include "veRenderer.h"
+#include "veVoxel.h"
+
 
 namespace vee {
 	

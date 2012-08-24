@@ -14,8 +14,6 @@
 #include "veTransform.h"
 
 
-// Chunk serializer
-#include "veChunkSerializer.h"
 // Texture
 #include "veTexture.h"
 
