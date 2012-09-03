@@ -23,13 +23,18 @@
 // Texture manager
 #include "veTextureManager.h"
 
+// Font system
+#include "veFontSystem.h"
+
 
 // Editor
+#include "veGUIElement.h"
+
 // Scene factory
 #include "veSceneFactory.h"
 
 // Color panel
-#include "veColorSelector.h"
+//#include "veColorSelector.h"
 
 
 namespace vee {
@@ -137,34 +142,44 @@ namespace vee {
 		// Texture manager
 		veTextureManager* mTextureManager;
 
+		// Font system
+		veFontSystem* mFontSystem;
+
 
 	public:
 		// UI
 		// Window
-		veUIComponent* mUIWindow;
+		//veUIComponent* mUIWindow;
 		// Edit view
-		veUIComponent* mUIEditView;
+		//veUIComponent* mUIEditView;
 		// Color selector
-		veColorSelector* mColorSelector;
+		//veColorSelector* mColorSelector;
 		// Texture panel
 		//UITexturePanel* mUITexturePanel;
 
 
 		// Editor
 		// Scene factory
-		SceneFactory* mSceneFactory;
+		//SceneFactory* mSceneFactory;
 
 
 	public:
 		// TODO: Better architect
 		// Edit data
 		// Chunk
-		Chunk* mChunk;
+		//Chunk* mChunk;
 		// Chunk mesh
-		Mesh* mMesh;
+		//Mesh* mMesh;
 		// Factory history
-		FactoryHistory* mHistory;
+		//FactoryHistory* mHistory;
 
+
+
+		// Testing GUI element
+		veGUIElement* mTestGUI;
+
+		// Testing font texture
+		veTexture* mTestTexture;
 
 
 		//---------------------------------------------------------------
@@ -205,7 +220,7 @@ namespace vee {
 
 	protected:
 		// Mouse left button area
-		MouseLArea mMouseLArea;
+		//MouseLArea mMouseLArea;
 
 		// Mouse position
 		POINT mMousePos;

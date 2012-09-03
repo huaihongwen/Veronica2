@@ -12,7 +12,7 @@ namespace vee {
 		// All UIs are not selected initially
 		mIsSelected = false;
 
-		mBorderWidth = 2;
+		mBorderWidth = 1;
 
 		// Set default texture coordinate
 		mTexCoords[0] = 0.0f;

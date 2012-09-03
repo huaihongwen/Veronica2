@@ -18,35 +18,38 @@ namespace vee {
 		// Texture manager
 		mTextureManager = NULL;
 
+		// Font system
+		mFontSystem = NULL;
+
 
 		// UI
 		// Window
-		mUIWindow = NULL;
+		//mUIWindow = NULL;
 		// Edit view
-		mUIEditView = NULL;
-
+		//mUIEditView = NULL;
 		// Color selection
-		mColorSelector = NULL;
+		//mColorSelector = NULL;
 		// Texture panel
 		//mUITexturePanel = NULL;
 
+
 		// Editor
 		// Scene factory
-		mSceneFactory = NULL;
+		//mSceneFactory = NULL;
 
 
 		// Edit data
 		// Chunk
-		mChunk = NULL;
+		//mChunk = NULL;
 		// Chunk mesh
-		mMesh = NULL;
+		//mMesh = NULL;
 		// Factory history
-		mHistory = NULL;
+		//mHistory = NULL;
 
 
 		// Input
 		// Mouse left button area
-		mMouseLArea = UI_WINDOW;
+		//mMouseLArea = UI_WINDOW;
 
 		// Mouse position
 		mMousePos.x = 0;
@@ -77,22 +80,40 @@ namespace vee {
 
 		// Edit data
 		// Chunk
-		mChunk = new Chunk();
-		mChunk->init(16, 16, 16, 0, 0, 0);
+		//mChunk = new Chunk();
+		//mChunk->init(16, 16, 16, 0, 0, 0);
 		// Chunk mesh
-		mMesh = new Mesh();
-		mMesh->init(16*16*16*36);
+		//mMesh = new Mesh();
+		//mMesh->init(16*16*16*36);
 		// Chunk history
-		mHistory = new FactoryHistory();
+		//mHistory = new FactoryHistory();
 
 
 		// Editor
 		// Scene factory
-		mSceneFactory = new SceneFactory();
+		//mSceneFactory = new SceneFactory();
 		// Set parent pointer
-		mSceneFactory->mParent = this;
+		//mSceneFactory->mParent = this;
 		// Init scene factory
-		mSceneFactory->init(mChunk, mMesh, mHistory);
+		//mSceneFactory->init(mChunk, mMesh, mHistory);
+
+
+
+		// Testing GUI element
+		mTestGUI = new veGUIElement();
+		mTestGUI->setId("TestGUI");
+		mTestGUI->setRect(veRect(20, 20, 50, 60));
+
+		// Texture
+		TGAData tgaData;
+		TGALoader::loadTGAFile(&tgaData, "textures//font//Courier1.tga");
+
+		mTestTexture = new veTexture();
+		mTestTexture->init(tgaData.mWidth, tgaData.mHeight,
+			GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, tgaData.mData);
+
+		// Font system
+		mFontSystem->setFontTexture(mTestTexture);
 	}
 
 	//---------------------------------------------------------------
@@ -103,6 +124,7 @@ namespace vee {
 		
 		// Edit data
 		// Chunk
+		/*
 		if (mChunk) {
 			delete mChunk;
 		}
@@ -121,6 +143,7 @@ namespace vee {
 		if (mSceneFactory) {
 			delete mSceneFactory;
 		}
+		*/
 
 
 		// UI
@@ -157,7 +180,7 @@ namespace vee {
 
 
 		// Renderer
-		mRenderer->render();
+		//mRenderer->render();
 	}
 
 
@@ -191,6 +214,10 @@ namespace vee {
 
 		// Texture manager
 		mTextureManager = new veTextureManager();
+
+		// Font system
+		mFontSystem = new veFontSystem();
+		mFontSystem->init(14, 14);
 	}
 
 
@@ -199,6 +226,11 @@ namespace vee {
 	 * Destroy engine
 	 */
 	void Editor::_destroyEngine() {
+
+		// Delete font system
+		if (mFontSystem) {
+			delete mFontSystem;
+		}
 
 		// Delete GLSL manager
 		if (mGLSLManager) {
@@ -217,7 +249,7 @@ namespace vee {
 			delete mTextureManager;
 		}
 
-		// File system
+		// delete file system
 		if (mFileSystem) {
 			delete mFileSystem;
 		}
@@ -230,6 +262,7 @@ namespace vee {
 	 */
 	void Editor::_initUI() {
 
+		/*
 		// Window
 		mUIWindow = new veUIComponent();
 		mUIWindow->setRect(veRect(0, 0, EDITWINDOWWIDTH, EDITWINDOTHEIGHT));
@@ -245,6 +278,7 @@ namespace vee {
 		mColorSelector->setRect(veRect(820, 20, 170, 180));
 		mColorSelector->setBackgroundColor(32, 32, 32);
 		mColorSelector->init();
+		*/
 
 		// Texture panel
 		//mUITexturePanel = new UITexturePanel();
@@ -259,6 +293,7 @@ namespace vee {
 	 */
 	void Editor::_destroyUI() {
 
+		/*
 		// Window
 		if (mUIWindow) {
 			delete mUIWindow;
@@ -271,6 +306,7 @@ namespace vee {
 		if (mColorSelector) {
 			delete mColorSelector;
 		}
+		*/
 		// Texture panel
 		//if (mUITexturePanel) {
 			//delete mUITexturePanel;
@@ -286,11 +322,14 @@ namespace vee {
 		// Render system
 		RenderSystem& rs = RenderSystem::getSingleton();
 
+
 		// Window width
 		int ww = rs.getWindowWidth();
 		// Window height
 		int wh = rs.getWindowHeight();
 
+
+		// Ortho projection
 		rs.setOrthoProjection(0.0f, (float)ww, 0.0f, (float)wh);
 
 		// Viewport
@@ -304,14 +343,22 @@ namespace vee {
 		rs.clearBuffers(GL_DEPTH_BUFFER_BIT);
 
 
-		// Window
-		mUIWindow->render();
-		// Edit view
-		mUIEditView->render();
-		// Color selection
-		mColorSelector->render();
-		// Texture panel
-		//mUITexturePanel->render();
+		// Alpha blending
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
+		// Font system
+		string test = "abcdefghijklmnopqrstuvwxyz /\nABCDEFGHIJKLMNOPQRSTUVWXYZ.?/ \n 1234567890";
+		uchar c[4];
+		c[0] = c[1] = c[2] = c[3] = 255;
+		c[3] = 128;
+		mFontSystem->renderString(test.c_str(), test.size(), 100, 100, c);
+
+
+
+		// Disable alpha blending
+		glDisable(GL_BLEND);
 
 
 		// Clear depth buffer
@@ -342,37 +389,11 @@ namespace vee {
 	//---------------------------------------------------------------
 	// Mouse left button down
 	void Editor::mouseLDown(int x, int y) {
-
-		// UI
-		_mouseLDownUI(x, y);
-
-
-		// Clicked UI_EDITVIEW
-		if (mMouseLArea == UI_EDITVIEW) {
-
-			// Scene factory mouseLDown
-			mSceneFactory->mouseLDown(x, y);
-		}
 	}
 
 	//---------------------------------------------------------------
 	// Mouse left up
 	void Editor::mouseLUp(int x, int y) {
-
-		// UI
-		_mouseLUpUI(x, y);
-
-
-		// Clicked UI_EDITVIEW
-		if (mMouseLArea == UI_EDITVIEW) {
-
-			// Scene factory mouseLUp
-			mSceneFactory->mouseLUp(x, y);
-		}
-
-
-		// Reset mouse left button area
-		mMouseLArea = UI_WINDOW;
 	}
 
 	//---------------------------------------------------------------
@@ -396,16 +417,11 @@ namespace vee {
 
 
 		// Clicked edit view
-		if (mMouseLArea == UI_EDITVIEW && !mKeys[16]) {
-
+		//if (mMouseLArea == UI_EDITVIEW && !mKeys[16]) {
 			// Rotate camera
-			mRenderer->getCamera().onCameraRotate((float)dy, (float)(-dx));
-
-			return;
-		}
-
-		// Scene factory mouse move
-		mSceneFactory->mouseMove(mMousePos.x, mMousePos.y);
+		//	mRenderer->getCamera().onCameraRotate((float)dy, (float)(-dx));
+		//	return;
+		//}
 	}
 
 
@@ -414,24 +430,6 @@ namespace vee {
 	 * Mouse left button down UI
 	 */
 	void Editor::_mouseLDownUI(int x, int y) {
-
-		// Edit view
-		if (mUIEditView->mouseLDown(x, y)) {
-			
-			mMouseLArea = UI_EDITVIEW;
-		}
-
-		// Color panel
-		if (mColorSelector->mouseLDown(x, y)) {
-
-			mMouseLArea = UI_COLORPANEL;
-		}
-
-		// Texture panel
-		//if (mUITexturePanel->mouseLDown(x, y)) {
-			
-			//mMouseLArea = UI_TEXTUREPANEL;
-		//}
 	}
 
 	//---------------------------------------------------------------
@@ -439,12 +437,6 @@ namespace vee {
 	 * Mouse left button up UI
 	 */
 	void Editor::_mouseLUpUI(int x, int y) {
-
-		// Color panel
-		mColorSelector->mouseLUp(x, y);
-
-		// Texture panel
-		//mUITexturePanel->mouseLUp(x, y);
 	}
 
 
@@ -464,6 +456,7 @@ namespace vee {
 	// Key pressed
 	void Editor::keyPressed(WPARAM key) {
 
+		/*
 		// File system
 		veFileSystem& fs = veFileSystem::getSingleton();
 
@@ -522,5 +515,6 @@ namespace vee {
 		default:
 			break;
 		}
+		*/
 	}
 };
